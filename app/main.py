@@ -58,7 +58,7 @@ async def read_item_wait_for_text_change(request: Request, background_tasks: Bac
     
     # Wait for the specific CSS selector's text to change from "{{objektNr}}"
     WebDriverWait(browser, 10).until(
-        text_not_to_be(".example-selector", "{{objektNr}}")
+        text_not_to_be("#centercolumn > div.l-container.table.m-contentarea > div > div > div.MarketVehicleSpotsDetailViewBlock > div.fast2-widget.objectinfovehicles.objectinfoFORDON > div > dl > dd.ObjektNummer", "{{objektNr}}")
     )
     
     background_tasks.add_task(kill_chromedriver, browser)
