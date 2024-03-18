@@ -3,6 +3,7 @@ from pydantic import BaseModel, Schema
 from starlette.middleware.cors import CORSMiddleware
 
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 class Request(BaseModel):
     url: str = Schema(None, title="The description of the item", max_length=1000)
@@ -33,10 +34,9 @@ def root():
 async def read_item(request: Request, background_tasks: BackgroundTasks):
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
-    # chrome can not be run as root, which is the case in docker
     options.add_argument('no-sandbox')
     options.add_argument('disable-gpu')
-    browser = webdriver.Chrome(options=options)
+    browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     browser.get(request.url)
     background_tasks.add_task(kill_chromedriver, browser)
     return {
