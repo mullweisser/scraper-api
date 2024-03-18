@@ -4,6 +4,9 @@ from starlette.middleware.cors import CORSMiddleware
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 class Request(BaseModel):
     url: str = Schema(None, title="The description of the item", max_length=1000)
