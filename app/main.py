@@ -27,6 +27,16 @@ app.add_middleware(
 def kill_chromedriver(browser):
     browser.quit()
 
+def text_not_to_be(css_selector, prohibited_text):
+    """Wait until the text of the element selected by css_selector is not prohibited_text."""
+    def compare_text(driver):
+        try:
+            element_text = driver.find_element(By.CSS_SELECTOR, css_selector).text
+            return element_text != prohibited_text
+        except:
+            # If the element is not found, we can consider the condition not met
+            return False
+    return compare_text
 
 @app.get("/")
 def root():
