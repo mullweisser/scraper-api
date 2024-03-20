@@ -90,11 +90,13 @@ async def login(request: LoginRequest, background_tasks: BackgroundTasks):
     browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     
     try:
+        print(f"URL: {request.url}")
         browser.get(request.url)
         username_input = browser.find_element("css selector", "#Username")
         password_input = browser.find_element("css selector", "#Password")
         login_button = browser.find_element("css selector", "body > div.min-h-screen.flex.flex-col > div.flex.flex-1.max-w-sitewidthcontent.w-full.mx-auto.p-4.py-4.md\\:py-10 > div > div > div.py-6.px-4.lg\\:px-6.login-page-wrapper.bg-blue-100 > div.flex.justify-center.items-center > div > div > div:nth-child(2) > div > div > form > button")
         
+        print(f'Username: {request.username}')
         username_input.send_keys(request.username)
         password_input.send_keys(request.password.get_secret_value())
         login_button.click()
