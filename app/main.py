@@ -92,14 +92,22 @@ async def login(request: LoginRequest, background_tasks: BackgroundTasks):
     try:
         print(f"URL: {request.url}")
         browser.get(request.url)
-        username_input = browser.find_element("css selector", "#Username")
-        password_input = browser.find_element("css selector", "#Password")
-        login_button = browser.find_element("css selector", "body > div.min-h-screen.flex.flex-col > div.flex.flex-1.max-w-sitewidthcontent.w-full.mx-auto.p-4.py-4.md\\:py-10 > div > div > div.py-6.px-4.lg\\:px-6.login-page-wrapper.bg-blue-100 > div.flex.justify-center.items-center > div > div > div:nth-child(2) > div > div > form > button")
+        browser.find_element(By.CSS_SELECTOR, "#tab3 > .apitext-loaded").click()
+        username_input = browser.find_element(By.ID, "Username")
+        password_input = browser.find_element(By.ID, "Password")
+        login_button = browser.find_element(By.NAME, "button")
+        apartments_list_button = browser.find_element(By.CSS_SELECTOR, ".mb-6:nth-child(2) > .group:nth-child(1) > .group > .truncate").click()
         
         print(f'Username: {request.username}')
+        username_input.click()
+        username_input.click()
         username_input.send_keys(request.username)
+        
+        password_input.click()
+        password_input.click()
         password_input.send_keys(request.password.get_secret_value())
         login_button.click()
+        apartments_list_button.click()
 
         # Optionally wait for some condition to verify login success
         # Example: WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, "some-element-id")))
