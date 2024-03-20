@@ -92,7 +92,7 @@ async def login(request: LoginRequest, background_tasks: BackgroundTasks):
     try:
         print(f"URL: {request.url}")
         browser.get(request.url)
-        browser.find_element(By.ID, "tab3").click() # #tab3
+        #tab3_button = browser.find_element(By.ID, "tab3") # //*[@id="tab3"] #tab3
         username_input = browser.find_element(By.ID, "Username")
         password_input = browser.find_element(By.ID, "Password")
         login_button = browser.find_element(By.NAME, "button")
