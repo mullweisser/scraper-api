@@ -1,5 +1,5 @@
-from fastapi import FastAPI, BackgroundTasks, HTTPException
-from pydantic import BaseModel, SecretStr
+from fastapi import FastAPI, BackgroundTasks
+from pydantic import BaseModel, Schema
 from starlette.middleware.cors import CORSMiddleware
 
 from selenium import webdriver
@@ -12,12 +12,8 @@ from selenium.webdriver.common.keys import Keys
 app = FastAPI()
 
 class Request(BaseModel):
-    url: str
+    url: str = Schema(None, title="The description of the item", max_length=1000)
 
-class LoginRequest(BaseModel):
-    url: str
-    username: str
-    password: SecretStr  # Use SecretStr to ensure that the password is not printed in logs
 
 app.add_middleware(
     CORSMiddleware,
@@ -80,50 +76,3 @@ async def read_item_wait_for_text_change(request: Request, background_tasks: Bac
         "url": request.url,
         "content": browser.page_source
     }
-
-@app.post("/login/stena/")
-async def login(request: LoginRequest, background_tasks: BackgroundTasks):
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    options.add_argument('no-sandbox')
-    options.add_argument('disable-gpu')
-    browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    
-    try:
-        print(f"URL: {request.url}")
-        browser.get(request.url)
-        print(browser.source)
-        #tab3_button = browser.find_element(By.ID, "tab3") # //*[@id="tab3"] #tab3
-        username_input = browser.find_element(By.ID, "Username")
-        password_input = browser.find_element(By.ID, "Password")
-        login_button = browser.find_element(By.NAME, "button")
-        apartments_list_button = browser.find_element(By.CSS_SELECTOR, ".mb-6:nth-child(2) > .group:nth-child(1) > .group > .truncate").click()
-        
-        print(f'Username: {request.username}')
-        username_input.click()
-        username_input.click()
-        username_input.send_keys(request.username)
-        
-        password_input.click()
-        password_input.click()
-        password_input.send_keys(request.password.get_secret_value())
-        login_button.click()
-        apartments_list_button.click()
-
-        # Optionally wait for some condition to verify login success
-        # Example: WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.ID, "some-element-id")))
-        # Extracting token from local storage
-        token = browser.execute_script("return localStorage.getItem('token');")
-        print("Your Bearer token is:", token)
-
-        # Extracting token from a cookie
-        cookie = browser.get_cookie('name_of_the_token_cookie')
-        print("Your Bearer token is:", cookie['value'])
-
-    except Exception as e:
-        browser.quit()
-        raise HTTPException(status_code=500, detail=str(e))
-
-    background_tasks.add_task(kill_chromedriver, browser)
-    
-    return {"status": "Attempted login"}
