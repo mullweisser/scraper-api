@@ -1,5 +1,5 @@
 from fastapi import FastAPI, BackgroundTasks, HTTPException
-from pydantic import BaseModel, Schema, SecretStr
+from pydantic import BaseModel, SecretStr
 from starlette.middleware.cors import CORSMiddleware
 
 from selenium import webdriver
@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 app = FastAPI()
 
 class Request(BaseModel):
-    url: str = Schema(None, title="The description of the item", max_length=1000)
+    url: str
 
 class LoginRequest(BaseModel):
     url: str
@@ -92,6 +92,7 @@ async def login(request: LoginRequest, background_tasks: BackgroundTasks):
     try:
         print(f"URL: {request.url}")
         browser.get(request.url)
+        print(browser.source)
         #tab3_button = browser.find_element(By.ID, "tab3") # //*[@id="tab3"] #tab3
         username_input = browser.find_element(By.ID, "Username")
         password_input = browser.find_element(By.ID, "Password")
